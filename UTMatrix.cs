@@ -40,6 +40,12 @@ namespace UTMatrix {
 		// Construct an NxN Upper Triangular Matrix, initialized to 0
 		// Throws an error if N is non-sensical.
 		public UTMatrix(int N) {
+		/*	if(N < 1){
+				//throw new IndexOutOfRangeException();
+			}
+			int size = (N*(N+1))/2;
+			data = new int[size];
+			*/
 		}
 		// Returns the size of the matrix
 		public int getSize() {
@@ -73,6 +79,7 @@ namespace UTMatrix {
 		}
 
 		public static void Main(String [] args) {
+			
 			const int N = 5;
 			UTMatrix ut1 = new UTMatrix(N);
 			UTMatrix ut2 = new UTMatrix(N);
@@ -92,6 +99,7 @@ namespace UTMatrix {
 				Console.Write(v + " ");
 			}
 			Console.WriteLine();
+			
 		}
 	}
 }
