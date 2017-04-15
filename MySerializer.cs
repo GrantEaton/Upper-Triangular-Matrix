@@ -11,7 +11,10 @@ namespace Serializer {
 			return "hello world";
 		}
 		public static T Deserialize<T>(string str) {
-			return default(T);
+			Type tyle = typeof(T);
+			ConstructorInfo ctor = type.GetConstructor(new Type[] {});
+			T obj = (T_ctor.Invoke(new Object[] {});
+			return object;
 		}
 	}
 	public class Point {
