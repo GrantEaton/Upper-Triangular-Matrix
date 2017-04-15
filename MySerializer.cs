@@ -1,8 +1,13 @@
 using System;
+using System.Reflection;
 
 namespace Serializer {
 	public class MySerializer {
 		public static string Serialize(Object obj) {
+			Type type = obj.GetType();
+			foreach (FieldInfo info in type.GetFields()){
+				Console.WriteLine(info.Name + info.GetValue(obj));	
+			}
 			return "hello world";
 		}
 		public static T Deserialize<T>(string str) {
