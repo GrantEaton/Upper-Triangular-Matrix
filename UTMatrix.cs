@@ -36,20 +36,23 @@ namespace UTMatrix {
 	public class UTMatrix : IEnumerable {
 		// Must use a one dimensional array, having minumum size.
 		public int [] data;
+		public int N;
 
 		// Construct an NxN Upper Triangular Matrix, initialized to 0
 		// Throws an error if N is non-sensical.
 		public UTMatrix(int N) {
-		/*	if(N < 1){
-				//throw new IndexOutOfRangeException();
+			if(N < 1){
+				Console.WriteLine("Error. You are trying to initialize a matrix with illogical bounds.");
+				throw new IndexOutOfRangeException();
 			}
 			int size = (N*(N+1))/2;
 			data = new int[size];
-			*/
+			N = this.N;
+			
 		}
 		// Returns the size of the matrix
 		public int getSize() {
-			return -1;
+			return (N*(N+1))/2;
 		}
 		// Returns an upper triangular matrix that is the summation of a & b.
 		// Throws an error if a and b are incompatible.
@@ -59,16 +62,28 @@ namespace UTMatrix {
 		// Set the value at index [r][c] to val.
 		// Throws an error if [r][c] is an invalid index to alter.
 		public void set(int r, int c, int val) {
+			if (r > N-1 || r < 0 || c > N-1 || c < 0 || r > c){
+				Console.WriteLine("Error. You are trying to initialize a matrix with illogical bounds.");
+				throw new IndexOutOfRangeException();
+			}
+			int loc = r*N + c - r;
+			data[loc] = val;
 		}
 		// Returns the value at index [r][c]
 		// Throws an error if [r][c] is an invalid index
 		public int get(int r, int c) {
-			return 0;
+			if (r > N-1 || r < 0 || c > N-1 || c < 0 || r > c){
+				Console.WriteLine("You are trying to access the 2D matrix out of range.");
+				throw new IndexOutOfRangeException();
+			}
+			int loc = r*N + c - r;
+			int val = data[loc];
+			return val;
 		}
 		// Returns the position in the 1D array for [r][c].
 		// Throws an error if [r][c] is an invalid index
 		public int accessFunc(int r, int c) {
-			return 0;
+			return ((r*N)+c-r);
 		}
 		// Returns an enumerator for an upper triangular matrix
 		IEnumerator IEnumerable.GetEnumerator() {
