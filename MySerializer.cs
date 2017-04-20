@@ -8,44 +8,41 @@ namespace Serializer {
 			Type type = obj.GetType();
 			string serial = "";
 			foreach (FieldInfo info in type.GetFields()){
-				serial += (info.Name + " = " + info.GetValue(obj) +"; ");
+				serial += (info.Name + ";" + info.GetValue(obj) +";" + info.FieldType.ToString() + ";");
 			}
-			//Console.WriteLine(serial);
 			return serial;
 		}
 		public static T Deserialize<T>(string str) {
-			string[] arr = str.Split('\r');
-            		string[] array = new string[arr.Length - 1];
-           		Array.Copy(arr, array, array.Length);
-
-           		Type type = typeof(T);
-           		ConstructorInfo ctor = type.GetConstructor(new Type[] { });
-            		T obj = (T)ctor.Invoke(new Object[] { });
-
-            		for (int i = 1; i < array.Length; i += 3){
-                		string name = array[i];
-                		string value = array[i + 1];
-                		string valueType = arr[i + 2];
-                		if (valueType == "System.Boolean")
-                    			obj.GetType().GetField(name).SetValue(obj, bool.Parse(value));
-                		if (valueType == "System.Double")
-                    			obj.GetType().GetField(name).SetValue(obj, double.Parse(value));
-                		if (valueType == "System.Int32")
-                    			obj.GetType().GetField(name).SetValue(obj, int.Parse(value));
-
-            		}
-
-            	return obj;
-		Console.WriteLine(field[0] + ", " + field[1]);
-		}
+			string[] split = str.Split(';');
+            string[] serial = new string[split.Length-1];
+         	Array.Copy(split, serial, serial.Length);
 			
-			Type type = typeof(T);
-			ConstructorInfo ctor = type.GetConstructor(new Type[] {});
-			T obj = (T)ctor.Invoke(new Object[] {});
+           	Type type = typeof(T);
+           	ConstructorInfo ctor = type.GetConstructor(new Type[] { });
+            T obj = (T)ctor.Invoke(new Object[] { });
 
-			
+        	for (int i = 0; i < serial.Length; i ++){
+				string name = serial[i];
+                string val = serial[i + 1];
+            	string valType = serial[i + 2];
+                if (valType == "System.Boolean"){
+            			obj.GetType().GetField(name).SetValue(obj, bool.Parse(val));
+				}
+        		if (valType == "System.Double"){
+              			obj.GetType().GetField(name).SetValue(obj, double.Parse(val));
+				}
+           		if (valType == "System.Int32"){
+               			obj.GetType().GetField(name).SetValue(obj, int.Parse(val));
+				}
+				//increment by 3
+				i+=2;
+
+            }
+
 			return obj;
 		}
+			
+			
 		public static void Set<T>(T o, String fieldName, Object v) {
 			Console.WriteLine("Setting: " + o + " " + fieldName  + " with " + v);
 			Type t = o.GetType();
@@ -75,8 +72,8 @@ namespace Serializer {
 		public static void Main(String [] args) {	
 			Point p1 = new Point(2, 3, true);
 			String str1 = MySerializer.Serialize(p1);
-			Console.WriteLine(str1);
 			Point newPt = MySerializer.Deserialize<Point>(str1);
+			Console.WriteLine(newPt.x);
 			
 			newPt.toString();
 			Console.WriteLine(newPt);
