@@ -1,0 +1,101 @@
+using System;
+using System.Reflection;
+
+namespace Serializer
+{
+    public class MySerializer
+    {
+        public static string Serialize(Object obj)
+        {
+            var typeName = obj.ToString();
+            Type T = obj.GetType();
+            var fields = T.GetFields();
+
+            //get array to exact size needed for storage
+            string[] array = new string[1 + (fields.Length * 3)];
+            int size = 1;
+
+            array[0] = typeName;
+            for (int i = 0; i < fields.Length; i++)
+            {
+                array[size] = fields[i].Name;
+                size++;
+                array[size] = fields[i].GetValue(obj).ToString();
+                size++;
+                array[size] = fields[i].FieldType.ToString();
+                size++;
+            }
+
+            string str = "";
+            for (int i = 0; i < array.Length; i++)
+            {
+                //   \r is dummy flag
+                str += array[i] + '\r';
+            }
+
+
+            return str;
+        }
+
+        public static T Deserialize<T>(string str)
+        {
+            string[] arr = str.Split('\r');
+            string[] array = new string[arr.Length - 1];
+            Array.Copy(arr, array, array.Length);
+
+            Type type = typeof(T);
+            ConstructorInfo ctor = type.GetConstructor(new Type[] { });
+            T obj = (T)ctor.Invoke(new Object[] { });
+
+            for (int i = 1; i < array.Length; i += 3)
+            {
+                string name = array[i];
+                string value = array[i + 1];
+                string valueType = arr[i + 2];
+                if (valueType == "System.Boolean")
+                    obj.GetType().GetField(name).SetValue(obj, bool.Parse(value));
+                if (valueType == "System.Double")
+                    obj.GetType().GetField(name).SetValue(obj, double.Parse(value));
+                if (valueType == "System.Int32")
+                    obj.GetType().GetField(name).SetValue(obj, int.Parse(value));
+
+            }
+
+            return obj;
+        }
+    }
+    public class Point
+    {
+        public int x, y;
+        public double z;
+        public Point()
+        {
+            x = y = 0;
+            z = 0;
+        }
+        public Point(int X, int Y, double Z)
+        {
+            x = X;
+            y = Y;
+            z = Z;
+        }
+    }
+    public class Test
+    {
+        public static void Main(String[] args)
+        {
+            Point p1 = new Point(2, 3, 2.35);
+
+            String str1 = MySerializer.Serialize(p1);
+
+            string[] arr = str1.Split('\r');
+            string[] arr1 = new string[arr.Length - 1];
+            Array.Copy(arr, arr1, arr1.Length);
+
+            //		Console.WriteLine(str1);
+            Point newPt = MySerializer.Deserialize<Point>(str1);
+            Console.WriteLine(newPt.x);
+        }
+    }
+}
+
