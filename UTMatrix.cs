@@ -125,7 +125,7 @@ namespace UTMatrix {
 			for (int r=0; r<N; r++) {
 				ut1.set(r, r, 1);
 				for (int c=r; c<N; c++) {
-				Console.WriteLine("r: " + r + " c: "+c);
+			//	Console.WriteLine("r: " + r + " c: "+c);
 					ut2.set(r, c, 1);
 				}
 			}
