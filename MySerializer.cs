@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace Serializer {
 	public class MySerializer {
@@ -13,13 +14,38 @@ namespace Serializer {
 			return serial;
 		}
 		public static T Deserialize<T>(string str) {
-			IList<string> values  = str.Split(';').ToList<string>();
-			
+			string[] values  = str.Split(';');
+			Console.WriteLine(values);
+			foreach(string val in values){
+				string[] field  = val.Split('=');
+				if(field[1].indexOf('.') != -1){
+					double v = double.Parse(field[1], System.Globalization.CultureInfo.InvariantCulture);
+					Console.WriteLine(v);
+					Set(obj,field[0],v);
+				}
+				else if(isDigit(field[1][0])){
+					int v = int32.Parse(field[1]); 
+					Console.WriteLine(v);
+					Set(obj,field[0],v);	
+				}
+				
 
+				Console.WriteLine(field[0] + ", " + field[1]);
+			}
+			
 			Type type = typeof(T);
 			ConstructorInfo ctor = type.GetConstructor(new Type[] {});
 			T obj = (T)ctor.Invoke(new Object[] {});
+
+			
 			return obj;
+		}
+		public static void Set<T>(T o, String fieldName, Object v) {
+			Console.WriteLine("Setting: " + o + " " + fieldName  + " with " + v);
+			Type t = o.GetType();
+			FieldInfo info = t.GetField(fieldName);
+			
+			info.SetValue(o,v);
 		}
 	}
 	public class Point {
@@ -39,14 +65,15 @@ namespace Serializer {
 		}
 	}
 	public class Test {
+		
 		public static void Main(String [] args) {	
 			Point p1 = new Point(2, 3, true);
 			String str1 = MySerializer.Serialize(p1);
 			Console.WriteLine(str1);
 			Point newPt = MySerializer.Deserialize<Point>(str1);
+			
 			newPt.toString();
 			Console.WriteLine(newPt);
 		}
 	}
 }
-
