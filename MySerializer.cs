@@ -14,24 +14,30 @@ namespace Serializer {
 			return serial;
 		}
 		public static T Deserialize<T>(string str) {
-			string[] values  = str.Split(';');
-			Console.WriteLine(values);
-			foreach(string val in values){
-				string[] field  = val.Split('=');
-				if(field[1].indexOf('.') != -1){
-					double v = double.Parse(field[1], System.Globalization.CultureInfo.InvariantCulture);
-					Console.WriteLine(v);
-					Set(obj,field[0],v);
-				}
-				else if(isDigit(field[1][0])){
-					int v = int32.Parse(field[1]); 
-					Console.WriteLine(v);
-					Set(obj,field[0],v);	
-				}
-				
+			string[] arr = str.Split('\r');
+            		string[] array = new string[arr.Length - 1];
+           		Array.Copy(arr, array, array.Length);
 
-				Console.WriteLine(field[0] + ", " + field[1]);
-			}
+           		Type type = typeof(T);
+           		ConstructorInfo ctor = type.GetConstructor(new Type[] { });
+            		T obj = (T)ctor.Invoke(new Object[] { });
+
+            		for (int i = 1; i < array.Length; i += 3){
+                		string name = array[i];
+                		string value = array[i + 1];
+                		string valueType = arr[i + 2];
+                		if (valueType == "System.Boolean")
+                    			obj.GetType().GetField(name).SetValue(obj, bool.Parse(value));
+                		if (valueType == "System.Double")
+                    			obj.GetType().GetField(name).SetValue(obj, double.Parse(value));
+                		if (valueType == "System.Int32")
+                    			obj.GetType().GetField(name).SetValue(obj, int.Parse(value));
+
+            		}
+
+            	return obj;
+		Console.WriteLine(field[0] + ", " + field[1]);
+		}
 			
 			Type type = typeof(T);
 			ConstructorInfo ctor = type.GetConstructor(new Type[] {});
